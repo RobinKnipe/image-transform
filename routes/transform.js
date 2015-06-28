@@ -15,23 +15,35 @@ router.post('/', function (req, res, next) {
     var imagePath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', image);
     var rotated = matches[1] + '_rotated' + matches[2];
     var rotatePath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', rotated);
+    var cropped = matches[1] + '_cropped' + matches[2];
+    var croppedPath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', cropped);
     var result = matches[1] + '_result' + matches[2];
     var resultPath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', result);
 
-    rotate(imagePath, req.body.rotate, rotatePath, function (err) {
-        if (err) error(err, next);
-        else {
-            calculateCrop(rotatePath, req.body.editWidth, req.body.editHeight, req.body.width, req.body.height, req.body.left, req.body.top, function (err, cropBounds) {
+    //gm(rotatedImage).size(function (err, originalSize) {
+    //    if (err) error(err);
+    //    else {
+            rotate(imagePath, req.body.rotate, rotatePath, function (err) {
                 if (err) error(err, next);
                 else {
-                    crop(rotatePath, cropBounds, resultPath, function (err) {
+                    calculateCrop(rotatePath, /*originalSize,*/ req.body.editWidth, req.body.editHeight, req.body.width, req.body.height, req.body.left, req.body.top, function (err, cropBounds) {
                         if (err) error(err, next);
-                        else res.send({passport: 'images/uploads/temp/' + result});
+                        else {
+                            crop(rotatePath, cropBounds, croppedPath, function (err) {
+                                if (err) error(err, next);
+                                else {
+                                    binarize(croppedPath, '15%', resultPath, function (err) {
+                                        if (err) error(err, next);
+                                        else res.send({passport: 'images/uploads/temp/' + result});
+                                    });
+                                }
+                            });
+                        }
                     });
                 }
             });
-        }
-    });
+    //    }
+    //});
 });
 
 function previewBoundedByWidth(previewWidth, previewHeight, imageWidth, imageHeight) {
@@ -50,17 +62,26 @@ function previewResizeRatio(previewWidth, previewHeight, imageWidth, imageHeight
         : previewWidth / imageWidth;
 }
 
-function calculateCrop(rotatedImage, previewWidth, previewHeight, width, height, left, top, done) {
+function calculateCrop(rotatedImage, /*originalSize,*/ previewWidth, previewHeight, width, height, left, top, done) {
     var crop = {};
     gm(rotatedImage).size(function (err, rotatedSize) {
         if (err) error(err);
         else {
-            var ratio = previewResizeRatio(previewWidth, previewHeight, rotatedSize.width, rotatedSize.height);
+            //var originalRatio = previewResizeRatio(previewWidth, previewHeight, originalSize.Width, originalSize.Height);
+            var rotatedRatio = previewResizeRatio(previewWidth, previewHeight, rotatedSize.width, rotatedSize.height);
+            var previewOriginX = previewWidth/2, previewOriginY = previewHeight/2;
+            var rotatedOriginX = rotatedSize.width/2, rotatedOriginY = rotatedSize.height/2;
+            var previewCropLeftToOrigin = previewOriginX - left;
+            var previewCropTopToOrigin = previewOriginY - top;
+            var cropLeftToOrigin = previewCropLeftToOrigin / rotatedRatio;
+            var cropTopToOrigin = previewCropTopToOrigin / rotatedRatio;
+            //var widthDiff =
+            //var topAdjust
 
-            crop.width = width / ratio;
-            crop.height = height / ratio;
-            crop.x = left / ratio;
-            crop.y = top / ratio;
+            crop.x = rotatedOriginX - cropLeftToOrigin;
+            crop.y = rotatedOriginY - cropTopToOrigin;
+            crop.width = width / rotatedRatio;
+            crop.height = height / rotatedRatio;
         }
 
         done(err, crop);
@@ -76,6 +97,12 @@ function rotate(image, degrees, result, done) {
 function crop(image, crop, result, done) {
     gm(image)
         .crop(crop.width, crop.height, crop.x, crop.y)
+        .write(result, done);
+}
+
+function binarize(image, threshold, result, done) {
+    gm(image)
+        .threshold(threshold)
         .write(result, done);
 }
 
