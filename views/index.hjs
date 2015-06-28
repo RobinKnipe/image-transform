@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>{{ title }}</title>
+    <link rel='stylesheet' href='/stylesheets/style.css' />
+
+    <!-- script type="text/javascript" src="//ajax.googleapis.com/ajax/libs/jquery/1.11.3/jquery.min.js"></script -->
+    <script type="text/javascript" src="javascripts/jquery.js"></script>
+    <script type="text/javascript" src="javascripts/index.js"></script>
+  </head>
+  <body>
+    <h1>{{ title }}</h1>
+
+    <div id="content">
+
+      <div id="controls">
+        <div id="select">
+          <h2>Upload image</h2>
+
+          <p>Welcome to the {{ title }}</p>
+
+          <p>Please upload an image to start the transformation process</p>
+
+          <p>
+            <form id="upload" action="/upload" method="post" enctype="multipart/form-data">
+              <label for="passport">Upload image:</label>
+              <input type="file" name="passport" id="passport" />
+              <input type="submit" id="send" value="Upload image" />
+            </form>
+          </p>
+
+          <p>
+            <progress>Uploading image...</progress>
+          </p>
+        </div>
+
+        <div id="tools">
+          <h2>Transform image</h2>
+
+          <form id="transform" action="/transform" method="post">
+            <h3>Change rotation</h3>
+            <p>
+              <label for="rotate">Rotate:</label>
+              <input type="number" name="rotate" id="rotate" min="0" value="0" max="360" title="A number between 0 and 360 inclusive" />
+              <sup>o</sup>
+            </p>
+
+            <h3>Change cropping</h3>
+            <p class="crop">
+              <input type="button" id="crop" value="Crop..." />
+
+              <br />
+              <span>
+                <span>
+                  <label for="top">Top:</label>
+                  <input type="number" name="top" id="top" min="0" value="0" title="Crop the top of the image" />
+                </span>
+                <br />
+                <span>
+                  <label for="left">Left:</label>
+                  <input type="number" name="left" id="left" min="0" value="0" title="Crop the left of the image" />
+                </span>
+                <span>
+                  <label for="right">Right:</label>
+                  <input type="number" name="right" id="right" min="0" value="0" title="Crop the right of the image" />
+                </span>
+                <br />
+                <span>
+                  <label for="bottom">Bottom:</label>
+                  <input type="number" name="bottom" id="bottom" min="0" value="0" title="Crop the bottom of the image" />
+                </span>
+              </span>
+            </p>
+
+            <h3>Apply transformations</h3>
+            <p>
+              <input type="reset" value="Reset" id="reset" />
+              <input type="submit" value="Transform..." />
+            </p>
+
+            <input type="hidden" name="width" id="width" />
+            <input type="hidden" name="height" id="height" />
+            <input type="hidden" name="editWidth" id="editWidth" />
+            <input type="hidden" name="editHeight" id="editHeight" />
+            <input type="hidden" name="imagePath" id="imagePath" />
+          </form>
+
+          <p id="switcher">
+            <button id="switch">Switch</button>
+          </p>
+        </div>
+      </div>
+
+      <div id="image">
+        <div id="preview">
+          <h2>Preview</h2>
+          <div>
+            <div id="edit"></div>
+
+            <div id="cropper">
+              <div class="top left"></div>
+              <div class="top edge"></div>
+              <div class="top right"></div>
+              <div class="left edge"></div>
+              <div class="right edge"></div>
+              <div class="bottom left"></div>
+              <div class="bottom edge"></div>
+              <div class="bottom right"></div>
+            </div>
+          </div>
+        </div>
+
+        <div id="result">
+          <h2>Result</h2>
+          <p>Applying transformation...</p>
+          <div id="resultImg"></div>
+        </div>
+      </div>
+
+    </div>
+  </body>
+</html>

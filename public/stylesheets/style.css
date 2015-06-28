@@ -1,0 +1,165 @@
+
+html, body, #content {
+  height: 100%;
+  width: 100%;
+}
+
+body {
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+html, body, div {
+  margin: 0px;
+  padding: 0px;
+  box-sizing: border-box;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#content {
+  position: relative;
+}
+
+#controls, #image {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  width: 50%;
+  padding: 0px 20px;
+}
+
+#controls {
+  left: 0px;
+}
+
+progress {
+  visibility: hidden;
+  height: 20px;
+  width: 80%;
+}
+
+#rotate {
+  width: 3em;
+}
+
+.crop input[type="number"] {
+  width: 4em;
+}
+
+#image {
+  right: 0px;
+}
+
+#preview, #preview>div, #cropper, #result, #resultImg {
+  position: absolute;
+  top: 0px;
+  bottom: 0px;
+  left: 0px;
+  right: 0px;
+}
+
+#result {
+  visibility: hidden;
+}
+
+#preview>div, #resultImg {
+  top: 50px;
+  left: 20px;
+  right: 20px;
+}
+
+#preview>div {
+  overflow: hidden;
+}
+
+#edit {
+  position: absolute;
+  top: 10px;
+  bottom: 10px;
+  left: 10px;
+  right: 10px;
+  transform-origin: 50% 50%;
+  -webkit-transform-origin: 50% 50%;
+  -moz-transform-origin: 50% 50%;
+  -ms-transform-origin: 50% 50%;
+}
+
+#resultImg, #edit {
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+
+#cropper, .cropping #crop {
+  display: none;
+}
+
+.crop>span {
+  text-align: center;
+  display: inline-block;
+}
+
+.crop>span>span {
+  display: inline-block;
+  padding: 5px;
+}
+
+.cropping #cropper {
+  display: block;
+}
+
+#cropper>div {
+  position: absolute;
+  background-color: dimgray;
+  opacity: 0.5;
+}
+
+.top {
+  top: 0px;
+  height: 10px;
+}
+.left {
+  left: 0px;
+  width: 10px;
+}
+.right {
+  right: 0px;
+  width: 10px;
+}
+.bottom {
+  bottom: 0px;
+  height: 10px;
+}
+
+.top.edge {
+  border-bottom: dashed white 1px;
+  left: 10px;
+  right: 10px;
+}
+.left.edge {
+  border-right: dashed white 1px;
+  top: 10px;
+  bottom: 10px;
+}
+.right.edge {
+  border-left: dashed white 1px;
+  top: 10px;
+  bottom: 10px;
+}
+.bottom.edge {
+  border-top: dashed white 1px;
+  left: 10px;
+  right: 10px;
+}
+
+#result>p {
+  padding: 20px 50px;
+  background-image: url('/images/loading.gif');
+  background-repeat: no-repeat;
+  background-position: left;
+}
+
+.complete>p {
+  display: none;
+}
