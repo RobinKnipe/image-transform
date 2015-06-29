@@ -89,6 +89,7 @@ progress {
 #resultImg, #edit {
   background-size: contain;
   background-repeat: no-repeat;
+  background-position: center;
 }
 
 #cropper, .cropping #crop {

@@ -14,22 +14,30 @@ router.post('/', function (req, res, next) {
     var matches = /^(.+)(\.[^.]+)$/.exec(image);
     var imagePath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', image);
     var rotated = matches[1] + '_rotated' + matches[2];
-    var rotatePath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', rotated);
+    var rotatedPath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', rotated);
     var cropped = matches[1] + '_cropped' + matches[2];
     var croppedPath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', cropped);
     var result = matches[1] + '_result' + matches[2];
     var resultPath = path.join(path.dirname(__dirname), 'public', 'images', 'uploads', 'temp', result);
 
-    //gm(rotatedImage).size(function (err, originalSize) {
-    //    if (err) error(err);
-    //    else {
-            rotate(imagePath, req.body.rotate, rotatePath, function (err) {
+    var degrees = Number(req.body.rotate);
+    var previewWidth = Number(req.body.editWidth);
+    var previewHeight = Number(req.body.editHeight);
+    var width = Number(req.body.width);
+    var height = Number(req.body.height);
+    var left = Number(req.body.left);
+    var top = Number(req.body.top);
+
+    gm(imagePath).size(function (err, originalSize) {
+        if (err) error(err);
+        else {
+            rotate(imagePath, degrees, rotatedPath, function (err) {
                 if (err) error(err, next);
                 else {
-                    calculateCrop(rotatePath, /*originalSize,*/ req.body.editWidth, req.body.editHeight, req.body.width, req.body.height, req.body.left, req.body.top, function (err, cropBounds) {
+                    calculateCrop(rotatedPath, originalSize, previewWidth, previewHeight, width, height, left, top, function (err, cropBounds) {
                         if (err) error(err, next);
                         else {
-                            crop(rotatePath, cropBounds, croppedPath, function (err) {
+                            crop(rotatedPath, cropBounds, croppedPath, function (err) {
                                 if (err) error(err, next);
                                 else {
                                     binarize(croppedPath, '15%', resultPath, function (err) {
@@ -42,8 +50,8 @@ router.post('/', function (req, res, next) {
                     });
                 }
             });
-    //    }
-    //});
+        }
+    });
 });
 
 function previewBoundedByWidth(previewWidth, previewHeight, imageWidth, imageHeight) {
@@ -62,12 +70,12 @@ function previewResizeRatio(previewWidth, previewHeight, imageWidth, imageHeight
         : previewWidth / imageWidth;
 }
 
-function calculateCrop(rotatedImage, /*originalSize,*/ previewWidth, previewHeight, width, height, left, top, done) {
+function calculateCrop(rotatedImage, originalSize, previewWidth, previewHeight, width, height, left, top, done) {
     var crop = {};
     gm(rotatedImage).size(function (err, rotatedSize) {
         if (err) error(err);
         else {
-            //var originalRatio = previewResizeRatio(previewWidth, previewHeight, originalSize.Width, originalSize.Height);
+            var originalRatio = previewResizeRatio(previewWidth, previewHeight, originalSize.width, originalSize.height);
             var rotatedRatio = previewResizeRatio(previewWidth, previewHeight, rotatedSize.width, rotatedSize.height);
             var previewOriginX = previewWidth/2, previewOriginY = previewHeight/2;
             var rotatedOriginX = rotatedSize.width/2, rotatedOriginY = rotatedSize.height/2;
@@ -80,8 +88,8 @@ function calculateCrop(rotatedImage, /*originalSize,*/ previewWidth, previewHeig
 
             crop.x = rotatedOriginX - cropLeftToOrigin;
             crop.y = rotatedOriginY - cropTopToOrigin;
-            crop.width = width / rotatedRatio;
-            crop.height = height / rotatedRatio;
+            crop.width = width / originalRatio;
+            crop.height = height / originalRatio;
         }
 
         done(err, crop);

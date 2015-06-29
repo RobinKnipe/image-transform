@@ -41,7 +41,7 @@
             <h3>Change rotation</h3>
             <p>
               <label for="rotate">Rotate:</label>
-              <input type="number" name="rotate" id="rotate" min="0" value="0" max="360" title="A number between 0 and 360 inclusive" />
+              <input type="number" name="rotate" id="rotate" min="-180" value="0" max="180" title="A number between 0 and 360 inclusive" />
               <sup>o</sup>
             </p>
 
