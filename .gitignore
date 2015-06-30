@@ -1,4 +1,4 @@
 node_modules
-public/images/uploads/temp/*
+public/images/uploads/temp/*.*
 *.iml
 .idea

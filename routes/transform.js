@@ -42,7 +42,7 @@ router.post('/', function (req, res, next) {
                                 else {
                                     binarize(croppedPath, '15%', resultPath, function (err) {
                                         if (err) error(err, next);
-                                        else res.send({passport: 'images/uploads/temp/' + result});
+                                        else res.send({passport: 'images/uploads/temp/' + result});//TODO result
                                     });
                                 }
                             });
@@ -76,13 +76,13 @@ function calculateCrop(rotatedImage, originalSize, previewWidth, previewHeight, 
         if (err) error(err);
         else {
             var originalRatio = previewResizeRatio(previewWidth, previewHeight, originalSize.width, originalSize.height);
-            var rotatedRatio = previewResizeRatio(previewWidth, previewHeight, rotatedSize.width, rotatedSize.height);
+            //var rotatedRatio = previewResizeRatio(previewWidth, previewHeight, rotatedSize.width, rotatedSize.height);
             var previewOriginX = previewWidth/2, previewOriginY = previewHeight/2;
             var rotatedOriginX = rotatedSize.width/2, rotatedOriginY = rotatedSize.height/2;
             var previewCropLeftToOrigin = previewOriginX - left;
             var previewCropTopToOrigin = previewOriginY - top;
-            var cropLeftToOrigin = previewCropLeftToOrigin / rotatedRatio;
-            var cropTopToOrigin = previewCropTopToOrigin / rotatedRatio;
+            var cropLeftToOrigin = previewCropLeftToOrigin / originalRatio;
+            var cropTopToOrigin = previewCropTopToOrigin / originalRatio;
             //var widthDiff =
             //var topAdjust
 
@@ -90,6 +90,11 @@ function calculateCrop(rotatedImage, originalSize, previewWidth, previewHeight, 
             crop.y = rotatedOriginY - cropTopToOrigin;
             crop.width = width / originalRatio;
             crop.height = height / originalRatio;
+            console.dir({x:left, y:top, width:width, height:height});
+            console.dir(crop);
+            console.dir({width:previewWidth, height:previewHeight});
+            console.dir(originalSize);
+            console.dir(rotatedSize);
         }
 
         done(err, crop);
@@ -109,6 +114,7 @@ function crop(image, crop, result, done) {
 }
 
 function binarize(image, threshold, result, done) {
+    //done();
     gm(image)
         .threshold(threshold)
         .write(result, done);
@@ -120,5 +126,3 @@ module.exports.previewResizeRatio = previewResizeRatio;
 module.exports.calculateCrop = calculateCrop;
 module.exports.rotate = rotate;
 module.exports.crop = crop;
-
-//321613945

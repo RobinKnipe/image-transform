@@ -65,14 +65,14 @@ $(function() {
     });
 
     $('#crop').click(function() {
-        $('#rotate').attr('disabled', true);
-        $('#content').addClass('cropping');
+        //$('#rotate').attr('disabled', true);
+        $('#content').toggleClass('cropping');
         $('.crop input[type="number"]').forEach(function () {
            this.value = 0;
         });
     });
     $('#reset').click(function() {
-        $('#rotate').attr('disabled', false);
+        //$('#rotate').attr('disabled', false);
         $('#content').removeClass('cropping');
     });
 
@@ -92,9 +92,6 @@ $(function() {
         if (!isNaN(crop)) {
             $('.' + this.name).height(crop);
             $('.left.edge, .right.edge').css(this.name, crop + 'px');
-            $('#width').val(
-                Number($('#edit').width()) - (Number($('#left').val()) + Number($('#right').val()))
-            );
             checkCropping();
         }
     });
@@ -103,9 +100,6 @@ $(function() {
         if (!isNaN(crop)) {
             $('.' + this.name).width(crop);
             $('.top.edge, .bottom.edge').css(this.name, crop + 'px');
-            $('#height').val(
-                Number($('#edit').height()) - (Number($('#top').val()) + Number($('#bottom').val()))
-            );
             checkCropping();
         }
     });
@@ -115,6 +109,14 @@ $(function() {
 
         $('#editWidth').val($('#edit').width());
         $('#editHeight').val($('#edit').height());
+        var left = Number($('#left').val()) || 0;
+        var right = Number($('#right').val()) || 0;
+        var top = Number($('#top').val()) || 0;
+        var bottom = Number($('#bottom').val()) || 0;
+        var previewHeight = Number($('#edit').width()) || 0;
+        var previewWidth = Number($('#edit').height()) || 0;
+        $('#width').val(previewWidth - (left + right));
+        $('#height').val(previewHeight - (top + bottom));
 
         var data = $('#transform').serialize();
         $.ajax(this.action, {

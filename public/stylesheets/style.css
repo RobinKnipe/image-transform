@@ -92,7 +92,7 @@ progress {
   background-position: center;
 }
 
-#cropper, .cropping #crop {
+#cropper, /*.cropping #crop*/ {
   display: none;
 }
 
